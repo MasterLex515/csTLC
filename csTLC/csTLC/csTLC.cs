@@ -14,41 +14,59 @@ namespace CSharp_Shell
 {
     public static class Program 
     {
-        public static void Main() 
+        public static void Main()
         {
-           //karotest.karotestprint();
-           //karotest.karogetrequesttest();
-           Console.WriteLine("userID: ");
-           string id=Console.ReadLine();
-           string param1="userInfo";
-           string url=karoRequest.karoUrl(param1,id);
-           Console.WriteLine(url);
-           string userJson=karoRequest.karoGetRequest(url);
-           Console.WriteLine(userJson);
-           User u=JsonConvert.DeserializeObject<User>(userJson);
-           Console.WriteLine(u.id);
-           Console.WriteLine(u.login);
-           Console.WriteLine(u.color);
-           Console.WriteLine(u.lastVisit);
-           Console.WriteLine(u.signup);
-           Console.WriteLine(u.dran);
-           Console.WriteLine(u.activeGames);
-           Console.WriteLine(u.acceptsDayGames);
-           Console.WriteLine(u.acceptsNightGames);
-           Console.WriteLine(u.maxGames);
-           Console.WriteLine(u.sound);
-           Console.WriteLine(u.soundfile);
-           Console.WriteLine(u.size);
-           Console.WriteLine(u.border);
-           Console.WriteLine(u.desperate);
-           Console.WriteLine(u.birthdayToday);
-           Console.WriteLine(u.karodayToday);
-           Console.WriteLine(u.theme);
-           Console.WriteLine(u.bot);
-           Console.WriteLine(u.gamesort);
+            //karotest.karotestprint();
+            //karotest.karogetrequesttest();
+
+            bool loop = true; //variable for main-loop
+
+            //do-while main loop
+            do {
+                Console.WriteLine("userID: ");
+                string id = Console.ReadLine();
+                string param1 = "userInfo";
+                string url = KaroRequest.KaroUrl(param1, id);
+                Console.WriteLine(url);
+                string userJson = KaroRequest.KaroGetRequest(url);
+                Console.WriteLine(userJson);
+
+                //pruefung, ob user gefunden wurde, da sonst kein Json-String zur konvertierung vorhanden
+                if (userJson != "kein user gefunden!")
+                {
+                    User u = JsonConvert.DeserializeObject<User>(userJson);
+                    Console.WriteLine(u.Id);
+                    Console.WriteLine(u.Login);
+                    Console.WriteLine(u.Color);
+                    Console.WriteLine(u.LastVisit);
+                    Console.WriteLine(u.Signup);
+                    Console.WriteLine(u.Dran);
+                    Console.WriteLine(u.ActiveGames);
+                    Console.WriteLine(u.AcceptsDayGames);
+                    Console.WriteLine(u.AcceptsNightGames);
+                    Console.WriteLine(u.MaxGames);
+                    Console.WriteLine(u.Sound);
+                    Console.WriteLine(u.Soundfile);
+                    Console.WriteLine(u.Size);
+                    Console.WriteLine(u.Border);
+                    Console.WriteLine(u.Desperate);
+                    Console.WriteLine(u.BirthdayToday);
+                    Console.WriteLine(u.KarodayToday);
+                    Console.WriteLine(u.Theme);
+                    Console.WriteLine(u.Bot);
+                    Console.WriteLine(u.Gamesort);
+                }
+
+                Console.WriteLine("nochmal? (y/n): ");
+                string nochmal = Console.ReadLine();
+                if (nochmal=="n"||nochmal=="N")
+                {
+                    loop = false; //variable for main-loop = false to exit program
+                }
+            } while (loop==true);
         }
     }
-    
+    /*
     public class User
     {
         public int id {get; set; }
@@ -72,5 +90,6 @@ namespace CSharp_Shell
         public bool bot {get; set; }
         public string gamesort {get; set; }
     }
+    */
     
 }
