@@ -26,6 +26,7 @@ namespace CSharp_Shell
                 Console.WriteLine("Options:");
                 Console.WriteLine("1: UserInfo");
                 Console.WriteLine("2: GameInfo");
+                Console.WriteLine("3: login");
                 Console.WriteLine("");
                 Console.Write("Auswahl: ");
                 string auswahl = Console.ReadLine();
@@ -38,9 +39,12 @@ namespace CSharp_Shell
                     case "2":
                         GetKaroGameInfo.GetGame();
                         break;
+                    case "3":
+                        
+                        break;
 
                     default:
-                        Console.WriteLine(">> Eingabe ungültig! <<");
+                        Console.WriteLine(">> Eingabe ungï¿½ltig! <<");
                         break;
                 }
 

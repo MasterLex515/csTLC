@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace Karopapier
@@ -47,17 +48,23 @@ namespace Karopapier
 
         public static string KaroUrl(string param1switch, string param2url)
         {
-            const string prefix = "http:/";
+            const string prefix = "https:/";
             const char slash = '/';
             const string host = "www.karopapier.de/";
             const string api = "api/";
             const string users = "users/";
+            const string games = "games/";
+            const string queryPlayers1 = "?players=1";
             string karoApiUrl = "";
 
             switch (param1switch)
             {
                 case "userInfo":
                     karoApiUrl = prefix + slash + host + api + users + param2url;
+                    Console.WriteLine(karoApiUrl);
+                    break;
+                case "gameInfo":
+                    karoApiUrl = prefix + slash + host + api + games + param2url + queryPlayers1;
                     Console.WriteLine(karoApiUrl);
                     break;
             }
@@ -99,6 +106,15 @@ namespace Karopapier
             string rueckgabe = "kein user gefunden!";
             return rueckgabe;
         }
+        
+        public static void KaroPostRequest()
+        {
+            // create a request using a url that can receive a post.
+            WebRequest request = WebRequest.Create("https://www.karopapier.de/login");
+            // set the method property of the request to POST.
+            request.Method = "POST";
+        }
+        
     }
 
     public class GetKaroUserInfo
@@ -172,7 +188,45 @@ namespace Karopapier
         public static void GetGame()
         {
             Console.WriteLine("GID: ");
+            string gid=Console.ReadLine();
+            string param1="gameInfo";
+            string url=KaroRequest.KaroUrl(param1,gid);
+            Console.WriteLine(url);
+            string gameJson=KaroRequest.KaroGetRequest(url);
+            Console.WriteLine(gameJson);
+            Game g = JsonConvert.DeserializeObject<Game>(gameJson);
+            Console.WriteLine(g.Id);
+            Console.WriteLine(g.Name);
+            Console.WriteLine(g.MapId);
+            Console.WriteLine(g.Map.Name);
+            Console.WriteLine(g.Map.Cps.Length);
+            Console.WriteLine("Index 0: "+g.Map.Cps[0]+" | Index 1: "+g.Map.Cps[1]+" | Index 2: "+g.Map.Cps[2]);
+            Console.WriteLine(g.Players.Length);
+            Console.WriteLine(g.Players[0].Id);
+            Console.WriteLine(g.Players[0].Name);
         }
+        
+        public class Game
+        {
+            public int Id {get; set; }
+            public string Name {get; set; }
+            public int MapId {get; set; }
+            public GMapObj Map {get; set; }
+            public GPlayersObj[] Players {get; set; }
+            
+        }
+        public class GMapObj
+        {
+            public int Id {get; set; }
+            public string Name {get; set; }
+            public int[] Cps {get; set; }
+        }
+        public class GPlayersObj
+        {
+            public int Id {get; set; }
+            public string Name {get; set; }
+        }
+    
     }
 
 }
