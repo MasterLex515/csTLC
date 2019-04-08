@@ -106,15 +106,90 @@ namespace Karopapier
             string rueckgabe = "kein user gefunden!";
             return rueckgabe;
         }
-        
+
         public static void KaroPostRequest()
         {
-            // create a request using a url that can receive a post.
-            WebRequest request = WebRequest.Create("https://www.karopapier.de/login");
-            // set the method property of the request to POST.
+            Console.Write("login: ");
+            string userlogin = Console.ReadLine();
+            Console.Write("pw: ");
+            string userpw = Console.ReadLine();
+
+            UserLogin loginData = new UserLogin
+            {
+                login = userlogin,
+                password = userpw
+
+            };
+
+
+            const string prefix = "https:/";
+            const char slash = '/';
+            const string host = "www.karopapier.de/";
+            const string api = "api/";
+            const string login = "login";
+
+            // Create a request using a URL that can receive a post.   
+            //use HttpWebRequest to get it work!
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(prefix + slash + host + api + login);
+            //setup CookieContainer
+            request.CookieContainer = new CookieContainer();
+            // Set the Method property of the request to POST.  
             request.Method = "POST";
+            // Create POST data and convert it to a byte array.  
+            var postData = JsonConvert.SerializeObject(loginData);
+            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+            // Set the ContentType property of the WebRequest.  
+            request.ContentType = "application/json";
+            // Set the ContentLength property of the WebRequest.  
+            request.ContentLength = byteArray.Length;
+            // Get the request stream.  
+            Stream dataStream = request.GetRequestStream();
+            // Write the data to the request stream.  
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            // Close the Stream object.  
+            dataStream.Close();
+            // Get the response.  
+            //use HttpWebResponse to get it work!
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            // Display the status.  
+            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+            // Get the stream containing content returned by the server.  
+            dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.  
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.  
+            string responseFromServer = reader.ReadToEnd();
+            // Display the content.  
+            Console.WriteLine(responseFromServer);
+            // Display the Cookie
+            Cookie KaroKeks = response.Cookies[0];
+            Console.WriteLine(response.Cookies.Count);
+            Console.WriteLine(KaroKeks.Name);
+            Console.WriteLine(KaroKeks.Comment);
+            Console.WriteLine(KaroKeks.CommentUri);
+            Console.WriteLine(KaroKeks.Discard);
+            Console.WriteLine(KaroKeks.Domain);
+            Console.WriteLine(KaroKeks.Expired);
+            Console.WriteLine(KaroKeks.Expires);
+            Console.WriteLine(KaroKeks.HttpOnly);
+            Console.WriteLine(KaroKeks.Path);
+            Console.WriteLine(KaroKeks.Port);
+            Console.WriteLine(KaroKeks.Secure);
+            Console.WriteLine(KaroKeks.TimeStamp);
+            Console.WriteLine(KaroKeks.Value);
+            Console.WriteLine(KaroKeks.Version);
+            // Clean up the streams.  
+            reader.Close();
+            dataStream.Close();
+            response.Close();
         }
         
+    }
+
+    public class UserLogin
+    {
+        public string login { get; set; }
+        public string password { get; set; }
     }
 
     public class GetKaroUserInfo

@@ -40,7 +40,7 @@ namespace CSharp_Shell
                         GetKaroGameInfo.GetGame();
                         break;
                     case "3":
-                        
+                        KaroRequest.KaroPostRequest();
                         break;
 
                     default:
