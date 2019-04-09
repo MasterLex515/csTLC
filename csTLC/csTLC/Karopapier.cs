@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 namespace Karopapier
 {
+    
 
     public class KaroTest
     {
@@ -67,6 +68,10 @@ namespace Karopapier
                     karoApiUrl = prefix + slash + host + api + games + param2url + queryPlayers1;
                     Console.WriteLine(karoApiUrl);
                     break;
+                case "login":
+                    karoApiUrl = prefix + slash + host + api + param2url;
+                    Console.WriteLine(karoApiUrl);
+                    break;
             }
 
             return karoApiUrl;
@@ -107,37 +112,19 @@ namespace Karopapier
             return rueckgabe;
         }
 
-        public static void KaroPostRequest()
+        public static string KaroPostRequest(string postUrl, string postString)
         {
-            Console.Write("login: ");
-            string userlogin = Console.ReadLine();
-            Console.Write("pw: ");
-            string userpw = Console.ReadLine();
-
-            UserLogin loginData = new UserLogin
-            {
-                login = userlogin,
-                password = userpw
-
-            };
-
-
-            const string prefix = "https:/";
-            const char slash = '/';
-            const string host = "www.karopapier.de/";
-            const string api = "api/";
-            const string login = "login";
-
             // Create a request using a URL that can receive a post.   
             //use HttpWebRequest to get it work!
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(prefix + slash + host + api + login);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
             //setup CookieContainer
             request.CookieContainer = new CookieContainer();
             // Set the Method property of the request to POST.  
             request.Method = "POST";
             // Create POST data and convert it to a byte array.  
-            var postData = JsonConvert.SerializeObject(loginData);
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+            // "postData" Object must be converted to String to be able to pass it to KaroPostrequest! Objects cannot be passed to Methods I guess.
+            //var postData = JsonConvert.SerializeObject(postObject);
+            byte[] byteArray = Encoding.UTF8.GetBytes(postString);
             // Set the ContentType property of the WebRequest.  
             request.ContentType = "application/json";
             // Set the ContentLength property of the WebRequest.  
@@ -178,18 +165,22 @@ namespace Karopapier
             Console.WriteLine(KaroKeks.TimeStamp);
             Console.WriteLine(KaroKeks.Value);
             Console.WriteLine(KaroKeks.Version);
+
+                        
+            Console.WriteLine("");
+            string KeksString = JsonConvert.SerializeObject(KaroKeks);
+            Console.WriteLine("KeksString: " + KeksString);
+            Console.WriteLine("");
+            
+
             // Clean up the streams.  
             reader.Close();
             dataStream.Close();
             response.Close();
+
+            return responseFromServer;
         }
         
-    }
-
-    public class UserLogin
-    {
-        public string login { get; set; }
-        public string password { get; set; }
     }
 
     public class GetKaroUserInfo
@@ -304,7 +295,75 @@ namespace Karopapier
     
     }
 
+    public class KaroLogin
+    {
+        public static void login()
+        {
+            // create PostUrl
+            string param1 = "login";
+            string login = "login";
+            string postUrl = KaroRequest.KaroUrl(param1, login);
+            Console.WriteLine(postUrl);
+            // get user login data
+            Console.Write("login: ");
+            string userlogin = Console.ReadLine();
+            Console.Write("pw: ");
+            string userpw = Console.ReadLine();
+            //generate login dataobject
+            UserLogin loginData = new UserLogin
+            {
+                login = userlogin,
+                password = userpw
+
+            };
+            // convert loginData to string for passing to KaroPostRequest
+            var postData = JsonConvert.SerializeObject(loginData);
+            string loginResponse = KaroRequest.KaroPostRequest(postUrl, postData);
+            Console.WriteLine(loginResponse);
+            Console.WriteLine("");
+
+            
+            
+            
+            //Console.WriteLine(karoKeks.Name);
+
+            
+
+        }
+
+        public class UserLogin
+        {
+            public string login { get; set; }
+            public string password { get; set; }
+        }
+    }
+
+    public class KaroKeks
+    {
+        public KaroKeks(Cookie cookie)
+        {
+        }
+        public string Name { get; set; }
+        public string Comment { get; set; }
+        public string CommentUri { get; set; }
+        public bool Discard { get; set; }
+        public string Domain { get; set; }
+        public bool Expired { get; set; }
+        public string Expires { get; set; }
+        public bool HttpOnly { get; set; }
+        public string Path { get; set; }
+        public int Port { get; set; }
+        public bool Secure { get; set; }
+        public string Timestamp { get; set; }
+        public string Value { get; set; }
+        public string Version { get; set; }
+        
+    }
+
+
 }
+
+
 
 /*
             Uri uri = new Uri("http:"+"/"+"/www.karopapier.de");
