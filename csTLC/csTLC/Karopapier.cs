@@ -72,13 +72,16 @@ namespace Karopapier
                     karoApiUrl = prefix + slash + host + api + param2url;
                     Console.WriteLine(karoApiUrl);
                     break;
+                case "check":
+                    karoApiUrl = prefix + slash + host + api + param2url;
+                    break;
             }
 
             return karoApiUrl;
         }
 
         public static string KaroGetRequest(string getUrl)
-        {
+        { // TODO rebuild GetRequest to use HttpWebRequest for simplier use of sending cookie from KaroKeks Object
             try
             {
                 Uri uri = new Uri(getUrl);
@@ -149,26 +152,47 @@ namespace Karopapier
             // Display the content.  
             Console.WriteLine(responseFromServer);
             // Display the Cookie
-            Cookie KaroKeks = response.Cookies[0];
+            Cookie Keks = response.Cookies[0];
             Console.WriteLine(response.Cookies.Count);
-            Console.WriteLine(KaroKeks.Name);
-            Console.WriteLine(KaroKeks.Comment);
-            Console.WriteLine(KaroKeks.CommentUri);
-            Console.WriteLine(KaroKeks.Discard);
-            Console.WriteLine(KaroKeks.Domain);
-            Console.WriteLine(KaroKeks.Expired);
-            Console.WriteLine(KaroKeks.Expires);
-            Console.WriteLine(KaroKeks.HttpOnly);
-            Console.WriteLine(KaroKeks.Path);
-            Console.WriteLine(KaroKeks.Port);
-            Console.WriteLine(KaroKeks.Secure);
-            Console.WriteLine(KaroKeks.TimeStamp);
-            Console.WriteLine(KaroKeks.Value);
-            Console.WriteLine(KaroKeks.Version);
+            Console.WriteLine(Keks.Name);
+            Console.WriteLine(Keks.Comment);
+            Console.WriteLine(Keks.CommentUri);
+            Console.WriteLine(Keks.Discard);
+            Console.WriteLine(Keks.Domain);
+            Console.WriteLine(Keks.Expired);
+            Console.WriteLine(Keks.Expires);
+            Console.WriteLine(Keks.HttpOnly);
+            Console.WriteLine(Keks.Path);
+            Console.WriteLine(Keks.Port);
+            Console.WriteLine(Keks.Secure);
+            Console.WriteLine(Keks.TimeStamp);
+            Console.WriteLine(Keks.Value);
+            Console.WriteLine(Keks.Version);
 
+            //Store Cookie in KaroKeks Object
+            KaroKeks.Name = Keks.Name;
+            KaroKeks.Comment = Keks.Comment;
+            KaroKeks.CommentUri = Keks.CommentUri.ToString();
+            KaroKeks.Discard = Keks.Discard;
+            KaroKeks.Domain = Keks.Domain;
+            KaroKeks.Expired = Keks.Expired;
+            KaroKeks.Expires = Keks.Expires.ToString();
+            KaroKeks.HttpOnly = Keks.HttpOnly;
+            KaroKeks.Path = Keks.Path;
+            KaroKeks.Secure = Keks.Secure;
+            KaroKeks.Timestamp = Keks.TimeStamp.ToString();
+            KaroKeks.Value = Keks.Value;
+            KaroKeks.Version = Keks.Version.ToString();
+
+
+            // add cookie to CookieCollection
+            //CookieCollection cookieCollection = new CookieCollection();
+            //cookieCollection.Add(KaroKeks);
+            //KaroKeks karoKeks = new KaroKeks();
+            //karoKeks.CookieCollection.Add(Keks);
                         
             Console.WriteLine("");
-            string KeksString = JsonConvert.SerializeObject(KaroKeks);
+            string KeksString = JsonConvert.SerializeObject(Keks);
             Console.WriteLine("KeksString: " + KeksString);
             Console.WriteLine("");
             
@@ -299,6 +323,13 @@ namespace Karopapier
     {
         public static void login()
         {
+            // Testoutput for testing Cookie Object
+            Console.WriteLine("");
+            Console.WriteLine("Print Cookie Data from login-method out of KaroKeks Object before login post request:");
+            Console.WriteLine(KaroKeks.Name);
+            Console.WriteLine(KaroKeks.Domain);
+            Console.WriteLine("");
+
             // create PostUrl
             string param1 = "login";
             string login = "login";
@@ -316,18 +347,22 @@ namespace Karopapier
                 password = userpw
 
             };
+
+            // create CookieContainer to store cookies
+            //CookieContainer cookieContainer = new CookieContainer();
+            
             // convert loginData to string for passing to KaroPostRequest
             var postData = JsonConvert.SerializeObject(loginData);
             string loginResponse = KaroRequest.KaroPostRequest(postUrl, postData);
             Console.WriteLine(loginResponse);
             Console.WriteLine("");
+            Console.WriteLine("Print Cookie Data from login-method out of KaroKeks Object after login post request:");
+            Console.WriteLine(KaroKeks.Name);
+            Console.WriteLine(KaroKeks.Domain);
+            Console.WriteLine("");
 
-            
-            
             
             //Console.WriteLine(karoKeks.Name);
-
-            
 
         }
 
@@ -338,26 +373,32 @@ namespace Karopapier
         }
     }
 
-    public class KaroKeks
+    public static class KaroKeks
     {
-        public KaroKeks(Cookie cookie)
+        public static string Name { get; set; }
+        public static string Comment { get; set; }
+        public static string CommentUri { get; set; }
+        public static bool Discard { get; set; }
+        public static string Domain { get; set; }
+        public static bool Expired { get; set; }
+        public static string Expires { get; set; }
+        public static bool HttpOnly { get; set; }
+        public static string Path { get; set; }
+        public static int Port { get; set; }
+        public static bool Secure { get; set; }
+        public static string Timestamp { get; set; }
+        public static string Value { get; set; }
+        public static string Version { get; set; }
+    }
+
+    public class KaroCheckUser
+    {
+        public static void checkUser()
         {
+            string check = "check";
+            string getUrl = KaroRequest.KaroUrl(check, check);
+            KaroRequest.KaroGetRequest(getUrl);
         }
-        public string Name { get; set; }
-        public string Comment { get; set; }
-        public string CommentUri { get; set; }
-        public bool Discard { get; set; }
-        public string Domain { get; set; }
-        public bool Expired { get; set; }
-        public string Expires { get; set; }
-        public bool HttpOnly { get; set; }
-        public string Path { get; set; }
-        public int Port { get; set; }
-        public bool Secure { get; set; }
-        public string Timestamp { get; set; }
-        public string Value { get; set; }
-        public string Version { get; set; }
-        
     }
 
 

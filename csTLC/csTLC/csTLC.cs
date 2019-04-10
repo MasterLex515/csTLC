@@ -27,6 +27,7 @@ namespace CSharp_Shell
                 Console.WriteLine("1: UserInfo");
                 Console.WriteLine("2: GameInfo");
                 Console.WriteLine("3: login");
+                Console.WriteLine("4: checkUser");
                 Console.WriteLine("");
                 Console.Write("Auswahl: ");
                 string auswahl = Console.ReadLine();
@@ -41,6 +42,9 @@ namespace CSharp_Shell
                         break;
                     case "3":
                         KaroLogin.login();
+                        break;
+                    case "4":
+                        KaroCheckUser.checkUser();
                         break;
 
                     default:
