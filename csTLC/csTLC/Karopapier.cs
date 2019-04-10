@@ -56,24 +56,25 @@ namespace Karopapier
             const string users = "users/";
             const string games = "games/";
             const string queryPlayers1 = "?players=1";
+            string karoApiUrlBase = prefix + slash + host + api;
             string karoApiUrl = "";
 
             switch (param1switch)
             {
                 case "userInfo":
-                    karoApiUrl = prefix + slash + host + api + users + param2url;
+                    karoApiUrl = karoApiUrlBase + users + param2url;
                     Console.WriteLine(karoApiUrl);
                     break;
                 case "gameInfo":
-                    karoApiUrl = prefix + slash + host + api + games + param2url + queryPlayers1;
+                    karoApiUrl = karoApiUrlBase + games + param2url + queryPlayers1;
                     Console.WriteLine(karoApiUrl);
                     break;
                 case "login":
-                    karoApiUrl = prefix + slash + host + api + param2url;
+                    karoApiUrl = karoApiUrlBase + param2url;
                     Console.WriteLine(karoApiUrl);
                     break;
                 case "check":
-                    karoApiUrl = prefix + slash + host + api + param2url;
+                    karoApiUrl = karoApiUrlBase + users + param2url;
                     break;
             }
 
@@ -87,11 +88,33 @@ namespace Karopapier
                 Uri uri = new Uri(getUrl);
                 Console.WriteLine(uri);
                 // Create a request for the URL.   
-                WebRequest request = WebRequest.Create(uri);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
                 // If required by the server, set the credentials.  
                 request.Credentials = CredentialCache.DefaultCredentials;
+
+                // Create Cookie and Add Cookie if available
+                Cookie cookie = new Cookie
+                {
+                    Comment = KaroKeks.Comment,
+                    //cookie.CommentUri = KaroKeks.CommentUri;
+                    Discard = KaroKeks.Discard,
+                    Domain = KaroKeks.Domain,
+                    Expired = KaroKeks.Expired,
+                    //cookie.Expires = KaroKeks.Expires;
+                    HttpOnly = KaroKeks.HttpOnly,
+                    Name = KaroKeks.Name,
+                    Path = KaroKeks.Path,
+                    //cookie.Port = KaroKeks.Port.ToString();
+                    Secure = KaroKeks.Secure,
+                    //cookie.TimeStamp = KaroKeks.Timestamp;
+                    Value = KaroKeks.Value
+                    //cookie.Version = KaroKeks.Version.ToString();
+                };
+                request.CookieContainer = new CookieContainer();
+                request.CookieContainer.Add(cookie);
+                
                 // Get the response.  
-                WebResponse response = request.GetResponse();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 // Display the status.  
                 Console.WriteLine(((HttpWebResponse)response).StatusDescription);
                 // Get the stream containing content returned by the server.  
@@ -117,92 +140,100 @@ namespace Karopapier
 
         public static string KaroPostRequest(string postUrl, string postString)
         {
-            // Create a request using a URL that can receive a post.   
-            //use HttpWebRequest to get it work!
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
-            //setup CookieContainer
-            request.CookieContainer = new CookieContainer();
-            // Set the Method property of the request to POST.  
-            request.Method = "POST";
-            // Create POST data and convert it to a byte array.  
-            // "postData" Object must be converted to String to be able to pass it to KaroPostrequest! Objects cannot be passed to Methods I guess.
-            //var postData = JsonConvert.SerializeObject(postObject);
-            byte[] byteArray = Encoding.UTF8.GetBytes(postString);
-            // Set the ContentType property of the WebRequest.  
-            request.ContentType = "application/json";
-            // Set the ContentLength property of the WebRequest.  
-            request.ContentLength = byteArray.Length;
-            // Get the request stream.  
-            Stream dataStream = request.GetRequestStream();
-            // Write the data to the request stream.  
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            // Close the Stream object.  
-            dataStream.Close();
-            // Get the response.  
-            //use HttpWebResponse to get it work!
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            // Display the status.  
-            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-            // Get the stream containing content returned by the server.  
-            dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.  
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.  
-            string responseFromServer = reader.ReadToEnd();
-            // Display the content.  
-            Console.WriteLine(responseFromServer);
-            // Display the Cookie
-            Cookie Keks = response.Cookies[0];
-            Console.WriteLine(response.Cookies.Count);
-            Console.WriteLine(Keks.Name);
-            Console.WriteLine(Keks.Comment);
-            Console.WriteLine(Keks.CommentUri);
-            Console.WriteLine(Keks.Discard);
-            Console.WriteLine(Keks.Domain);
-            Console.WriteLine(Keks.Expired);
-            Console.WriteLine(Keks.Expires);
-            Console.WriteLine(Keks.HttpOnly);
-            Console.WriteLine(Keks.Path);
-            Console.WriteLine(Keks.Port);
-            Console.WriteLine(Keks.Secure);
-            Console.WriteLine(Keks.TimeStamp);
-            Console.WriteLine(Keks.Value);
-            Console.WriteLine(Keks.Version);
-
-            //Store Cookie in KaroKeks Object
-            KaroKeks.Name = Keks.Name;
-            KaroKeks.Comment = Keks.Comment;
-            KaroKeks.CommentUri = Keks.CommentUri.ToString();
-            KaroKeks.Discard = Keks.Discard;
-            KaroKeks.Domain = Keks.Domain;
-            KaroKeks.Expired = Keks.Expired;
-            KaroKeks.Expires = Keks.Expires.ToString();
-            KaroKeks.HttpOnly = Keks.HttpOnly;
-            KaroKeks.Path = Keks.Path;
-            KaroKeks.Secure = Keks.Secure;
-            KaroKeks.Timestamp = Keks.TimeStamp.ToString();
-            KaroKeks.Value = Keks.Value;
-            KaroKeks.Version = Keks.Version.ToString();
+            try
+            {
+                // Create a request using a URL that can receive a post.   
+                //use HttpWebRequest to get it work!
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(postUrl);
+                //setup CookieContainer
+                request.CookieContainer = new CookieContainer();
+                // Set the Method property of the request to POST.  
+                request.Method = "POST";
+                // Create POST data and convert it to a byte array.  
+                // "postData" Object must be converted to String to be able to pass it to KaroPostrequest! Objects cannot be passed to Methods I guess.
+                //var postData = JsonConvert.SerializeObject(postObject);
+                byte[] byteArray = Encoding.UTF8.GetBytes(postString);
+                // Set the ContentType property of the WebRequest.  
+                request.ContentType = "application/json";
+                // Set the ContentLength property of the WebRequest.  
+                request.ContentLength = byteArray.Length;
+                // Get the request stream.  
+                Stream dataStream = request.GetRequestStream();
+                // Write the data to the request stream.  
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                // Close the Stream object.  
+                dataStream.Close();
+                // Get the response.  
+                //use HttpWebResponse to get it work!
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // Display the status.  
+                Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+                // Get the stream containing content returned by the server.  
+                dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.  
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.  
+                string responseFromServer = reader.ReadToEnd();
+                // Display the content.  
+                Console.WriteLine(responseFromServer);
+                // Display the Cookie
+                Cookie Keks = response.Cookies[0];
+                Console.WriteLine(response.Cookies.Count);
+                Console.WriteLine(Keks.Name);
+                Console.WriteLine(Keks.Comment);
+                Console.WriteLine(Keks.CommentUri);
+                Console.WriteLine(Keks.Discard);
+                Console.WriteLine(Keks.Domain);
+                Console.WriteLine(Keks.Expired);
+                Console.WriteLine(Keks.Expires);
+                Console.WriteLine(Keks.HttpOnly);
+                Console.WriteLine(Keks.Path);
+                Console.WriteLine(Keks.Port);
+                Console.WriteLine(Keks.Secure);
+                Console.WriteLine(Keks.TimeStamp);
+                Console.WriteLine(Keks.Value);
+                Console.WriteLine(Keks.Version);
 
 
-            // add cookie to CookieCollection
-            //CookieCollection cookieCollection = new CookieCollection();
-            //cookieCollection.Add(KaroKeks);
-            //KaroKeks karoKeks = new KaroKeks();
-            //karoKeks.CookieCollection.Add(Keks);
-                        
-            Console.WriteLine("");
-            string KeksString = JsonConvert.SerializeObject(Keks);
-            Console.WriteLine("KeksString: " + KeksString);
-            Console.WriteLine("");
-            
+                //Store Cookie in KaroKeks Object
+                KaroKeks.Name = Keks.Name;
+                KaroKeks.Comment = Keks.Comment;
+                //KaroKeks.CommentUri = Keks.CommentUri.ToString();
+                KaroKeks.Discard = Keks.Discard;
+                KaroKeks.Domain = Keks.Domain;
+                KaroKeks.Expired = Keks.Expired;
+                KaroKeks.Expires = Keks.Expires.ToString();
+                KaroKeks.HttpOnly = Keks.HttpOnly;
+                KaroKeks.Path = Keks.Path;
+                KaroKeks.Secure = Keks.Secure;
+                KaroKeks.Timestamp = Keks.TimeStamp.ToString();
+                KaroKeks.Value = Keks.Value;
+                KaroKeks.Version = Keks.Version.ToString();
 
-            // Clean up the streams.  
-            reader.Close();
-            dataStream.Close();
-            response.Close();
 
-            return responseFromServer;
+                // add cookie to CookieCollection
+                //CookieCollection cookieCollection = new CookieCollection();
+                //cookieCollection.Add(KaroKeks);
+                //KaroKeks karoKeks = new KaroKeks();
+                //karoKeks.CookieCollection.Add(Keks);
+
+                Console.WriteLine("");
+                string KeksString = JsonConvert.SerializeObject(Keks);
+                Console.WriteLine("KeksString: " + KeksString);
+                Console.WriteLine("");
+
+
+                // Clean up the streams.  
+                reader.Close();
+                dataStream.Close();
+                response.Close();
+
+                return responseFromServer;
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
         
     }
@@ -295,7 +326,7 @@ namespace Karopapier
             Console.WriteLine(g.Players[0].Id);
             Console.WriteLine(g.Players[0].Name);
         }
-        
+        // TODO class Game might be incomplete
         public class Game
         {
             public int Id {get; set; }
@@ -305,12 +336,14 @@ namespace Karopapier
             public GPlayersObj[] Players {get; set; }
             
         }
+        // TODO class GMapObj might be incomplete
         public class GMapObj
         {
             public int Id {get; set; }
             public string Name {get; set; }
             public int[] Cps {get; set; }
         }
+        // TODO class GPlayerObj might be incomplete evaluate if mergable with casual UserObject
         public class GPlayersObj
         {
             public int Id {get; set; }
@@ -318,7 +351,7 @@ namespace Karopapier
         }
     
     }
-
+    // TODO add password masking. password should not be readable when entered
     public class KaroLogin
     {
         public static void login()

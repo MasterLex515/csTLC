@@ -29,6 +29,8 @@ namespace CSharp_Shell
                 Console.WriteLine("3: login");
                 Console.WriteLine("4: checkUser");
                 Console.WriteLine("");
+                Console.WriteLine("you must login first!");
+                Console.WriteLine("");
                 Console.Write("Auswahl: ");
                 string auswahl = Console.ReadLine();
 
