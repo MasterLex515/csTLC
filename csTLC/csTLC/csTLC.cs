@@ -23,14 +23,21 @@ namespace CSharp_Shell
 
             //do-while main loop
             do {
+                csTlcHead();
+
                 Console.WriteLine("Options:");
                 Console.WriteLine("1: UserInfo");
                 Console.WriteLine("2: GameInfo");
                 Console.WriteLine("3: login");
                 Console.WriteLine("4: checkUser");
                 Console.WriteLine("");
-                Console.WriteLine("you must login first!");
-                Console.WriteLine("");
+                // output cookie name for debug
+                Console.WriteLine("KeksName: "+KaroKeks.Name);
+                if (KaroKeks.Name == null)
+                {
+                    Console.WriteLine("you must login first!");
+                    Console.WriteLine("");
+                }
                 Console.Write("Auswahl: ");
                 string auswahl = Console.ReadLine();
 
@@ -61,8 +68,20 @@ namespace CSharp_Shell
                 {
                     loop = false; //variable for main-loop = false to exit program
                 }
+                Console.Clear();
             } while (loop==true);
         }
+
+        public static void csTlcHead()
+        {
+            Console.WriteLine("###########################################");
+            Console.WriteLine("#                                         #");
+            Console.WriteLine("#          C# - TeamLiga-Console          #");
+            Console.WriteLine("#                                         #");
+            Console.WriteLine("###########################################");
+            Console.WriteLine("");
+        }
+
     }
 
     

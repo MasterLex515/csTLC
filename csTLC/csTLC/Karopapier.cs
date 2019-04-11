@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Security;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json;
@@ -371,8 +372,18 @@ namespace Karopapier
             // get user login data
             Console.Write("login: ");
             string userlogin = Console.ReadLine();
-            Console.Write("pw: ");
-            string userpw = Console.ReadLine();
+
+            // get password with masking from console
+            string msg = "pw: ";
+            string pw = getPasswordFromConsole(msg);
+            string userpw = pw.ToString();
+            
+            // output for debug
+            //Console.WriteLine(userpw);
+
+            //Console.Write("pw: ");
+            //string userpw = Console.ReadLine();
+
             //generate login dataobject
             UserLogin loginData = new UserLogin
             {
@@ -404,6 +415,39 @@ namespace Karopapier
             public string login { get; set; }
             public string password { get; set; }
         }
+
+        public static string getPasswordFromConsole(string displayMessage)
+        {
+            string pass = "";
+            Console.Write(displayMessage);
+            ConsoleKeyInfo key;
+
+            do
+            {
+                key = Console.ReadKey(true);
+
+                // Backspace Should Not Work
+                if (!char.IsControl(key.KeyChar))
+                {
+                    pass += key.KeyChar;
+                    //pass.AppendChar(key.KeyChar);
+                    Console.Write("*");
+                }
+                else
+                {
+                    if (key.Key == ConsoleKey.Backspace && pass.Length > 0)
+                    {
+                        // remove last char when backspace is pressed
+                        pass = pass.Remove(pass.Length - 1);
+                        Console.Write("\b \b");
+                    }
+                }
+            }
+            // Stops Receving Keys Once Enter is Pressed
+            while (key.Key != ConsoleKey.Enter);
+            return pass;
+        }
+
     }
 
     public static class KaroKeks
