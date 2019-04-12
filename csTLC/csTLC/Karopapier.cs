@@ -47,9 +47,20 @@ namespace Karopapier
 
     public class KaroRequest
     {
+        // parts for building Karo Urls
+        public static string UrlPrefix {get;} = "https:/";
+        public static char UrlSlash { get; } = '/';
+        public static string UrlHost { get; } = "www.karopapier.de/";
+        public static string UrlApi { get; } = "api/";
+        public static string UrlUsers { get; } = "users/";
+        public static string UrlGames { get; } = "games/";
+        public static string UrlQueryPlayers1 { get; } = "?players=1";
+        public static string UrlAbmelden { get; } = "abmelden.php";
+        public static string UrlKaroApiUrlBase { get; } = UrlPrefix + UrlSlash + UrlHost + UrlApi;
 
         public static string KaroUrl(string param1switch, string param2url)
         {
+            /*
             const string prefix = "https:/";
             const char slash = '/';
             const string host = "www.karopapier.de/";
@@ -57,25 +68,31 @@ namespace Karopapier
             const string users = "users/";
             const string games = "games/";
             const string queryPlayers1 = "?players=1";
+            const string abmelden = "abmelden.php";
             string karoApiUrlBase = prefix + slash + host + api;
+            string karoApiUrl = "";
+            */
             string karoApiUrl = "";
 
             switch (param1switch)
             {
                 case "userInfo":
-                    karoApiUrl = karoApiUrlBase + users + param2url;
+                    karoApiUrl = UrlKaroApiUrlBase + UrlUsers + param2url;
                     Console.WriteLine(karoApiUrl);
                     break;
                 case "gameInfo":
-                    karoApiUrl = karoApiUrlBase + games + param2url + queryPlayers1;
+                    karoApiUrl = UrlKaroApiUrlBase + UrlGames + param2url + UrlQueryPlayers1;
                     Console.WriteLine(karoApiUrl);
                     break;
                 case "login":
-                    karoApiUrl = karoApiUrlBase + param2url;
+                    karoApiUrl = UrlKaroApiUrlBase + param2url;
                     Console.WriteLine(karoApiUrl);
                     break;
                 case "check":
-                    karoApiUrl = karoApiUrlBase + users + param2url;
+                    karoApiUrl = UrlKaroApiUrlBase + UrlUsers + param2url;
+                    break;
+                case "logout":
+                    karoApiUrl = UrlPrefix + UrlSlash + UrlHost + UrlAbmelden;
                     break;
             }
 
@@ -116,6 +133,45 @@ namespace Karopapier
                 
                 // Get the response.  
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                // get the response Cookie
+                Cookie responseCookie = response.Cookies[0];
+                // Debug! output display the response Cookie
+                Console.WriteLine(response.Cookies.Count);
+                Console.WriteLine(responseCookie.Name);
+                Console.WriteLine(responseCookie.Comment);
+                Console.WriteLine(responseCookie.CommentUri);
+                Console.WriteLine(responseCookie.Discard);
+                Console.WriteLine(responseCookie.Domain);
+                Console.WriteLine(responseCookie.Expired);
+                Console.WriteLine(responseCookie.Expires);
+                Console.WriteLine(responseCookie.HttpOnly);
+                Console.WriteLine(responseCookie.Path);
+                Console.WriteLine(responseCookie.Port);
+                Console.WriteLine(responseCookie.Secure);
+                Console.WriteLine(responseCookie.TimeStamp);
+                Console.WriteLine(responseCookie.Value);
+                Console.WriteLine(responseCookie.Version);
+
+                // Store the response Cookie if user logged out
+                if (getUrl == UrlPrefix + UrlSlash + UrlHost + UrlAbmelden)
+                {
+                    KaroKeks.Comment = responseCookie.Comment;
+                    //KaroKeks.CommentUri = responseCookie.CommentUri;
+                    KaroKeks.Discard = responseCookie.Discard;
+                    KaroKeks.Domain = responseCookie.Domain;
+                    KaroKeks.Expired = responseCookie.Expired;
+                    KaroKeks.Expires = responseCookie.Expires.ToString();
+                    KaroKeks.HttpOnly = responseCookie.HttpOnly;
+                    KaroKeks.Name = responseCookie.Name;
+                    KaroKeks.Path = responseCookie.Path;
+                    //KaroKeks.Port = responseCookie.Port;
+                    KaroKeks.Secure = responseCookie.Secure;
+                    KaroKeks.Timestamp = responseCookie.TimeStamp.ToString();
+                    KaroKeks.Value = responseCookie.Value;
+                    KaroKeks.Version = responseCookie.Version.ToString();
+
+                }
+
                 // Display the status.  
                 Console.WriteLine(((HttpWebResponse)response).StatusDescription);
                 // Get the stream containing content returned by the server.  
@@ -129,6 +185,9 @@ namespace Karopapier
                 // Clean up the streams and the response.  
                 reader.Close();
                 response.Close();
+
+                
+
                 return responseFromServer;
             }
             catch (Exception e)
@@ -352,7 +411,7 @@ namespace Karopapier
         }
     
     }
-    // TODO add password masking. password should not be readable when entered
+    
     public class KaroLogin
     {
         public static void login()
@@ -415,7 +474,7 @@ namespace Karopapier
             public string login { get; set; }
             public string password { get; set; }
         }
-
+        // password masking
         public static string getPasswordFromConsole(string displayMessage)
         {
             string pass = "";
@@ -457,7 +516,7 @@ namespace Karopapier
         public static string CommentUri { get; set; }
         public static bool Discard { get; set; }
         public static string Domain { get; set; }
-        public static bool Expired { get; set; }
+        public static bool Expired { get; set; } = true;
         public static string Expires { get; set; }
         public static bool HttpOnly { get; set; }
         public static string Path { get; set; }
@@ -478,6 +537,21 @@ namespace Karopapier
         }
     }
 
+    public class KaroLogout
+    {
+        public static void logout()
+        {
+            Console.WriteLine("logging out ...");
+            string param1 = "logout";
+            string param2 = null;
+            string logoutUrl = KaroRequest.KaroUrl(param1, param2);
+            string logoutResponse = KaroRequest.KaroGetRequest(logoutUrl);
+            Console.WriteLine(logoutResponse);
+            Console.WriteLine("");
+            Console.WriteLine("logged out!");
+            Console.WriteLine("");
+        }
+    }
 
 }
 
