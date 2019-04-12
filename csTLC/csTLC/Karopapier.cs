@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 namespace Karopapier
 {
     
-
     public class KaroTest
     {
         public static void KaroTestprint()

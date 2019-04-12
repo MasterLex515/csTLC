@@ -13,6 +13,7 @@ using System.Threading;
 // namespace CSharp_Shell because I started with the Android App | maybe I'll change it later
 namespace CSharp_Shell
 {
+
     public static class Program 
     {
         private static bool loop = true; //variable for main-loop
