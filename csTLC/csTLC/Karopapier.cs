@@ -482,7 +482,7 @@ namespace Karopapier
 
             do
             {
-                key = Console.ReadKey(true);
+                key = Console.ReadKey();
 
                 // Backspace Should Not Work
                 if (!char.IsControl(key.KeyChar))

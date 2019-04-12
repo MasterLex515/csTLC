@@ -1,5 +1,5 @@
-//+pkg=Newtonsoft.Json.12.0.2-beta1
 //+src=Karopapier.cs
+//+pkg=Newtonsoft.Json.12.0.2-beta1
 //+src=
 using System;
 using System.IO;
