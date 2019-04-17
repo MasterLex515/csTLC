@@ -94,7 +94,7 @@ namespace CSharp_Shell
                 }
 
 
-                Console.Clear();
+                //Console.Clear(); // outcomment for CSharp_Shell!
             }
         }
 

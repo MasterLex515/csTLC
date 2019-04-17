@@ -479,7 +479,9 @@ namespace Karopapier
             string pass = "";
             Console.Write(displayMessage);
             ConsoleKeyInfo key;
-
+            pass = Console.ReadLine(); // for CSharp_Shell only!!!
+            
+            /* outcomment when using CSharp_Shell!
             do
             {
                 key = Console.ReadKey();
@@ -503,6 +505,7 @@ namespace Karopapier
             }
             // Stops Receving Keys Once Enter is Pressed
             while (key.Key != ConsoleKey.Enter);
+            */
             return pass;
         }
 
